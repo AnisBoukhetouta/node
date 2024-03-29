@@ -2,6 +2,9 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require("path");
+const File = require("./models/fileModel.js");
+
 const multer = require("multer");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
@@ -19,18 +22,25 @@ app.use((req, res, next) => {
 app.use("/", authRoutes);
 
 //====================Middleware to parse JSON and urlencoded form data====================
-const upload = multer({ dest: "uploads/" });
-//====================Route to handle form submission====================
-app.post("/upload", upload.single("file"), (req, res) => {
-  // const {name, email} = req.body;
-  const file = req.file;
-  console.log("Received form data:", req.body);
-  res.send("Form data received successfully.");
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
 });
+const upload = multer({ storage: storage });
+//====================Route to handle form submission====================
 
 // connect the app to a database
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     app.listen(port, () => {
       console.log("connected to db and server started on", port);
@@ -39,3 +49,44 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
+
+app.post(
+  "/upload",
+  upload.fields([
+    { name: "fileUpload" },
+    { name: "landscapeFile" },
+    { name: "portraitFile" },
+    { name: "squareFile" },
+  ]),
+  async (req, res) => {
+    // const {name, email} = req.body;
+    try {
+      const files = [];
+
+      for (const fieldName of Object.keys(req.files)) {
+        for (const file of req.files[fieldName]) {
+          const savedFile = await File.create({
+            fieldName: file.fieldname,
+            originalName: file.originalname,
+            enCoding: file.encoding,
+            mimeType: file.mimetype,
+            destination: file.destination,
+            fileName: file.filename,
+            path: file.path,
+            size: file.size,
+          });
+          files.push(savedFile);
+        }
+      }
+      res.json({ files });
+    } catch (error) {
+      console.error("Error saving files:", error);
+      res.status(500).send("Server error.");
+    }
+
+    console.log("Received form data:", req.body);
+    console.log("~~~~~~~~~RES:", res);
+    console.log("~~~~~~~~~RES:", req);
+    // res.send("Form data received successfully.");
+  }
+);
