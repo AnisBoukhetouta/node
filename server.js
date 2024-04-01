@@ -56,8 +56,18 @@ mongoose
 app.get("/files", async (req, res) => {
   try {
     // Retrieve all files from MongoDB
-    const files = await File.find();
+    // const files = await File.find();
     // Send the files as JSON response
+
+    const files = await File.aggregate([
+      {
+        $group: {
+          _id: "$gameTitle", // Group by the gameTitle field
+          files: { $push: "$$ROOT" }, // Push documents into the files array for each group
+        },
+      },
+    ]);
+
     res.json(files);
   } catch (error) {
     console.error("Error retrieving files:", error);
