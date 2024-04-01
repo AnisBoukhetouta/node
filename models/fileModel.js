@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const fileSchema = new mongoose.Schema({
+  gameTitle: String,
   fieldName: String,
   originalName: String,
   enCoding: String,

@@ -4,7 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const File = require("./models/fileModel.js");
-
+const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
@@ -24,7 +24,11 @@ app.use("/", authRoutes);
 
 // Middleware to parse JSON and urlencoded form data
 const storage = multer.diskStorage({
-  destination: "uploads/",
+  destination: function (req, file, cb) {
+    const folderPath = `uploads/${req.body.gameTitle}`;
+    fs.mkdirSync(folderPath, { recursive: true });
+    cb(null, folderPath);
+  },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + path.extname(file.originalname));
   },
@@ -77,6 +81,7 @@ app.post(
       for (const fieldName of Object.keys(req.files)) {
         for (const file of req.files[fieldName]) {
           const savedFile = await File.create({
+            gameTitle: req.body.gameTitle,
             fieldName: file.fieldname,
             originalName: file.originalname,
             enCoding: file.encoding,
