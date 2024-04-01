@@ -4,6 +4,8 @@ const fileSchema = new mongoose.Schema({
   gameTitle: String,
   category: String,
   tags: String,
+  description: String,
+  controls: String,
   gameType: String,
   fieldName: String,
   originalName: String,

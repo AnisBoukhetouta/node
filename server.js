@@ -94,6 +94,8 @@ app.post(
             gameTitle: req.body.gameTitle,
             category: req.body.category,
             tags: req.body.tags,
+            description: req.body.description,
+            controls: req.body.controls,
             gameType: req.body.gameType,
             fieldName: file.fieldname,
             originalName: file.originalname,
