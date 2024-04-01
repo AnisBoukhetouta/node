@@ -62,7 +62,7 @@ app.get("/files", async (req, res) => {
     const files = await File.aggregate([
       {
         $group: {
-          _id: "$gameTitle", // Group by the gameTitle field
+          title: "$gameTitle", // Group by the gameTitle field
           files: { $push: "$$ROOT" }, // Push documents into the files array for each group
         },
       },
@@ -92,6 +92,9 @@ app.post(
         for (const file of req.files[fieldName]) {
           const savedFile = await File.create({
             gameTitle: req.body.gameTitle,
+            category: req.body.category,
+            tags: req.body.tags,
+            gameType: req.body.gameType,
             fieldName: file.fieldname,
             originalName: file.originalname,
             enCoding: file.encoding,

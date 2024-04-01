@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const fileSchema = new mongoose.Schema({
   gameTitle: String,
+  category: String,
+  tags: String,
+  gameType: String,
   fieldName: String,
   originalName: String,
   enCoding: String,
