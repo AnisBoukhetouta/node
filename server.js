@@ -25,11 +25,7 @@ app.use("/", authRoutes);
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
+    cb(null, file.fieldname + path.extname(file.originalname));
   },
 });
 const upload = multer({ storage: storage });
@@ -85,8 +81,7 @@ app.post(
     }
 
     console.log("Received form data:", req.body);
-    console.log("~~~~~~~~~RES:", res);
-    console.log("~~~~~~~~~RES:", req);
+    console.log("~~~~~~~~~REQ~~~ :", req.files);
     // res.send("Form data received successfully.");
   }
 );
