@@ -8,11 +8,12 @@ const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
+const timeout = require("connect-timeout");
 const port = process.env.PORT || 5000;
 
 // Initialize express app
 const app = express();
-
+app.use(timeout("30s"));
 // Allow the app to use middleware
 app.use(cors());
 app.use(express.json());
@@ -30,7 +31,10 @@ const storage = multer.diskStorage({
     cb(null, folderPath);
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + path.extname(file.originalname));
+    console.log("wwwwwwww", getFileExtension(file.originalname));
+    // cb(null, file.fieldname + path.extname(file.originalname));
+    // cb(null, `${file.fieldname}${path.extname(file.originalname)}`);
+    cb(null, file.fieldname);
   },
 });
 const upload = multer({ storage: storage });
@@ -79,12 +83,16 @@ app.get("/files", async (req, res) => {
 app.post(
   "/upload",
   upload.fields([
-    { name: "fileUpload" },
+    { name: "fileUpload[0]" },
+    { name: "fileUpload[1]" },
+    { name: "fileUpload[2]" },
+    { name: "fileUpload[3]" },
     { name: "landscapeFile" },
     { name: "portraitFile" },
     { name: "squareFile" },
   ]),
   async (req, res) => {
+    console.log("~~~~~~~~~~", req.files);
     try {
       const files = [];
 
@@ -116,3 +124,16 @@ app.post(
     }
   }
 );
+
+function getFileExtension(fileName) {
+  // Find the position of the last dot in the filename
+  const dotIndex = fileName.lastIndexOf(".");
+  // If a dot is found and it's not the first or last character
+  if (dotIndex !== -1 && dotIndex !== 0 && dotIndex !== fileName.length - 1) {
+    // Return the substring starting from the dot position
+    return fileName.substring(dotIndex);
+  } else {
+    // If no dot is found or it's the first/last character, return an empty string
+    return "";
+  }
+}
