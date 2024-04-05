@@ -16,6 +16,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serve static files from the 'uploads' directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderPath = `uploads/${req.body.gameTitle}`;
@@ -23,27 +26,22 @@ const storage = multer.diskStorage({
     cb(null, folderPath);
   },
   filename: function (req, file, cb) {
-    console.log("111111111", path.extname(file.originalname));
     const extension = path.extname(file.originalname);
     cb(null, `${file.fieldname}${extension}`);
-    console.log("222222222", file);
   },
 });
 const upload = multer({ storage: storage });
 
 app.get("/files", async (req, res) => {
   try {
-    // const files = await File.find();
-
     const files = await File.aggregate([
       {
         $group: {
-          title: "$gameTitle", // Group by the gameTitle field
-          files: { $push: "$$ROOT" }, // Push documents into the files array for each group
+          _id: "$gameTitle",
+          files: { $push: "$$ROOT" },
         },
       },
     ]);
-
     res.json(files);
   } catch (error) {
     console.error("Error retrieving files:", error);
@@ -64,18 +62,34 @@ app.post(
   ]),
   async (req, res) => {
     try {
+      // Validate request body
+      const { gameTitle, category, tags, description, controls, gameType } =
+        req.body;
+      if (
+        !gameTitle ||
+        !category ||
+        !tags ||
+        !description ||
+        !controls ||
+        !gameType
+      ) {
+        return res
+          .status(400)
+          .json({ message: "Missing required fields in request body." });
+      }
+
       const files = [];
 
       console.log("~~~~~~~~~~", req.files);
       for (const fieldName of Object.keys(req.files)) {
         for (const file of req.files[fieldName]) {
           const savedFile = await File.create({
-            gameTitle: req.body.gameTitle,
-            category: req.body.category,
-            tags: req.body.tags,
-            description: req.body.description,
-            controls: req.body.controls,
-            gameType: req.body.gameType,
+            gameTitle,
+            category,
+            tags,
+            description,
+            controls,
+            gameType,
             fieldName: file.fieldname,
             originalName: file.originalname,
             enCoding: file.encoding,
