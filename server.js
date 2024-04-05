@@ -34,7 +34,14 @@ const upload = multer({ storage: storage });
 
 app.get("/files", async (req, res) => {
   try {
+    let query = {};
+    if (req.query.gameTitle) {
+      query.gameTitle = req.query.gameTitle;
+    }
     const files = await File.aggregate([
+      {
+        $match: query,
+      },
       {
         $group: {
           _id: "$gameTitle",
