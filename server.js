@@ -6,7 +6,7 @@ const File = require("./models/fileModel.js");
 const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4003;
 
 const app = express();
 app.use(cors());
@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static files from the 'uploads' directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/pwniq/uploads", express.static(path.join(__dirname, "uploads")));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.get("/files", async (req, res) => {
+app.get("/api/pwniq/files", async (req, res) => {
   try {
     let query = {};
     if (req.query.gameTitle) {
@@ -57,7 +57,7 @@ app.get("/files", async (req, res) => {
 });
 
 app.post(
-  "/upload",
+  "/api/pwniq/upload",
   upload.fields([
     { name: "landscapeFile" },
     { name: "portraitFile" },
