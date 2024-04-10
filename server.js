@@ -7,7 +7,7 @@ const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
 const UserInfo = require("./models/userInfoModel.js");
-const port = process.env.PORT || 4003;
+const port = process.env.PORT || 6001;
 
 const app = express();
 app.use(cors());
