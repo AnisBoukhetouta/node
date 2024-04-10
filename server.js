@@ -6,6 +6,7 @@ const File = require("./models/fileModel.js");
 const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
+const UserInfo = require("./models/userInfoModel.js");
 const port = process.env.PORT || 4003;
 
 const app = express();
@@ -116,6 +117,43 @@ app.post(
     }
   }
 );
+
+app.post("/api/pwniq/userInfo", async (req, res) => {
+  try {
+    const {
+      email,
+      creationTime,
+      lastSignInTime,
+      uid,
+      providerId,
+      localId,
+      accessToken,
+      refreshToken,
+    } = req.body;
+    console.log("VVVVVVVVVVVV", req.body);
+    if (!email || !creationTime || !lastSignInTime || !uid || !accessToken) {
+      return res
+        .status(400)
+        .json({ message: "Missing required fields in request body." });
+    }
+    const newUser = await UserInfo.create({
+      email,
+      creationTime,
+      lastSignInTime,
+      uid,
+      providerId,
+      localId,
+      accessToken,
+      refreshToken,
+    });
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: newUser });
+  } catch (error) {
+    console.error("Error saving files:", error);
+    res.status(500).send("Server error.");
+  }
+});
 
 mongoose
   .connect(process.env.MONGO_URI, {
