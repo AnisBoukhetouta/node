@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const File = require("./models/fileModel");
 const UserInfo = require("./models/userInfoModel");
+const CharacterFile = require("./models/characterFileModel");
 
 const app = express();
 const port = process.env.PORT || 4003;
@@ -29,11 +30,28 @@ const storage = multer.diskStorage({
     cb(null, `${file.fieldname}${extension}`);
   },
 });
+const characterStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const destination = "glbFiles"; // Define the destination directory here
+    fs.mkdirSync(destination, { recursive: true });
+    cb(null, destination);
+  },
+  filename: (req, file, cb) => {
+    const extension = path.extname(file.originalname);
+    cb(null, `${file.fieldname}${extension}`);
+  },
+});
 const upload = multer({ storage });
+const characterUpload = multer({ storage: characterStorage });
 
 // Routes
 app.get("/api/pwniq/files", getFiles);
 app.post("/api/pwniq/upload", upload.array("files"), uploadFiles);
+app.post(
+  "/api/pwniq/characterFileUpload",
+  characterUpload.single("characterFileUpload"),
+  uploadCharacterFile
+);
 app.post("/api/pwniq/userInfo", createUserInfo);
 
 // Route Handlers
@@ -58,9 +76,19 @@ async function getFiles(req, res) {
 
 async function uploadFiles(req, res) {
   try {
-    const { gameTitle, category, tags, description, controls, gameType } = req.body;
-    if (!gameTitle || !category || !tags || !description || !controls || !gameType) {
-      return res.status(400).json({ message: "Missing required fields in request body." });
+    const { gameTitle, category, tags, description, controls, gameType } =
+      req.body;
+    if (
+      !gameTitle ||
+      !category ||
+      !tags ||
+      !description ||
+      !controls ||
+      !gameType
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Missing required fields in request body." });
     }
 
     const files = [];
@@ -90,11 +118,49 @@ async function uploadFiles(req, res) {
   }
 }
 
+async function uploadCharacterFile(req, res) {
+  try {
+    const { uid } = req.body;
+    if (!uid) {
+      return res
+        .status(400)
+        .json({ message: "Missing required fields in request body." });
+    }
+    const file = req.file;
+    console.log(file);
+    const savedFile = await CharacterFile.create({
+      fieldName: file.fieldname,
+      originalName: file.originalname,
+      enCoding: file.encoding,
+      mimeType: file.mimetype,
+      destination: file.destination,
+      fileName: file.filename,
+      path: file.path,
+      size: file.size,
+    });
+    res.json(savedFile);
+  } catch (error) {
+    console.error("Error saving files:", error);
+    res.status(500).send("Server error.");
+  }
+}
+
 async function createUserInfo(req, res) {
   try {
-    const { email, creationTime, lastSignInTime, uid, providerId, localId, accessToken, refreshToken } = req.body;
+    const {
+      email,
+      creationTime,
+      lastSignInTime,
+      uid,
+      providerId,
+      localId,
+      accessToken,
+      refreshToken,
+    } = req.body;
     if (!email || !creationTime || !lastSignInTime || !uid || !accessToken) {
-      return res.status(400).json({ message: "Missing required fields in request body." });
+      return res
+        .status(400)
+        .json({ message: "Missing required fields in request body." });
     }
     const newUser = await UserInfo.create({
       email,
@@ -106,7 +172,9 @@ async function createUserInfo(req, res) {
       accessToken,
       refreshToken,
     });
-    res.status(201).json({ message: "User created successfully", user: newUser });
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: newUser });
   } catch (error) {
     console.error("Error creating user info:", error);
     res.status(500).send("Server error.");
@@ -115,7 +183,10 @@ async function createUserInfo(req, res) {
 
 // Start the server
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(port, () => {
