@@ -18,9 +18,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "glbFiles")));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log('VVVVVVVVVVVVVVVVVV')
     const folderPath = `uploads/${req.body.gameTitle}`;
     fs.mkdirSync(folderPath, { recursive: true });
     cb(null, folderPath);
@@ -52,6 +54,7 @@ app.post(
   characterUpload.single("characterFileUpload"),
   uploadCharacterFile
 );
+app.get("/api/pwniq/characterFiles", getCharacterFiles);
 app.post("/api/pwniq/userInfo", createUserInfo);
 
 // Route Handlers
@@ -68,8 +71,25 @@ async function getFiles(req, res) {
       },
     ]);
     res.json(files);
-  } catch (error) {
-    console.error("Error retrieving files:", error);
+  } catch (e) {
+    console.log("Error retrieving files:", e);
+    res.status(500).send("Server error.");
+  }
+}
+
+async function getCharacterFiles(req, res) {
+  try {
+    const query = req.query.uid;
+    if (!query) {
+      return res
+        .status(400)
+        .json({ message: "Missing required fields in request body." });
+    }
+    const characterFileModel = await CharacterFile.findOne({ userId: query });
+    console.log("~~~~~~~~~~~~~~~", characterFileModel);
+    res.json(characterFileModel);
+  } catch (e) {
+    console.error("Error retrieving files:", e);
     res.status(500).send("Server error.");
   }
 }
@@ -129,6 +149,7 @@ async function uploadCharacterFile(req, res) {
     const file = req.file;
     console.log(file);
     const savedFile = await CharacterFile.create({
+      userId: uid,
       fieldName: file.fieldname,
       originalName: file.originalname,
       enCoding: file.encoding,
