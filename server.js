@@ -17,8 +17,9 @@ const port = process.env.PORT || 4003;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "glbFiles")));
+// app.use(express.static(path.join(__dirname, "uploads")));
+app.use("/api/pwniq/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/pwniq/glbFiles", express.static(path.join(__dirname, "glbFiles")));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -48,16 +49,82 @@ const characterUpload = multer({ storage: characterStorage });
 
 // Routes
 app.get("/api/pwniq/files", getFiles);
-app.post("/api/pwniq/upload", upload.array("files"), uploadFiles);
+// app.post("/api/pwniq/upload", upload.array("files"), uploadFiles);
 app.post(
   "/api/pwniq/characterFileUpload",
   characterUpload.single("characterFileUpload"),
   uploadCharacterFile
 );
 app.get("/api/pwniq/characterFiles", getCharacterFiles);
-app.post("/api/pwniq/userInfo", createUserInfo);
+// app.post("/api/pwniq/userInfo", createUserInfo);
 
 // Route Handlers
+
+app.post(
+  "/api/pwniq/upload",
+  upload.fields([
+    { name: "landscapeFile" },
+    { name: "portraitFile" },
+    { name: "squareFile" },
+    { name: "fileUpload0" },
+    { name: "fileUpload1" },
+    { name: "fileUpload2" },
+    { name: "fileUpload3" },
+  ]),
+  async (req, res) => {
+    try {
+      // Validate request body
+      const { gameTitle, category, tags, description, controls, gameType } =
+        req.body;
+      if (
+        !gameTitle ||
+        !category ||
+        !tags ||
+        !description ||
+        !controls ||
+        !gameType
+      ) {
+        return res
+          .status(400)
+          .json({ message: "Missing required fields in request body." });
+      }
+
+      var files = [];
+
+      console.log("~~~~~~~~~~", req.files);
+      for (let fieldName of Object.keys(req.files)) {
+          console.log("???????????????????????", fieldName);
+          for (let file of req.files[fieldName]) {
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!", file);
+          let savedFile = await File.create({
+            gameTitle,
+            category,
+            tags,
+            description,
+            controls,
+            gameType,
+            fieldName: file.fieldname,
+            originalName: file.originalname,
+            enCoding: file.encoding,
+            mimeType: file.mimetype,
+            destination: file.destination,
+            fileName: file.filename,
+            path: file.path,
+            size: file.size,
+          });
+          files.push(savedFile);
+          console.log("````````````````````", files);
+        }
+      }
+      console.log("@@@@@@@@@@@@@");
+      res.json(files);
+    } catch (error) {
+      console.error("Error saving files:", error);
+      res.status(500).send("Server error.");
+    }
+  }
+);
+
 async function getFiles(req, res) {
   try {
     const query = req.query.gameTitle ? { gameTitle: req.query.gameTitle } : {};
@@ -94,49 +161,49 @@ async function getCharacterFiles(req, res) {
   }
 }
 
-async function uploadFiles(req, res) {
-  try {
-    const { gameTitle, category, tags, description, controls, gameType } =
-      req.body;
-    if (
-      !gameTitle ||
-      !category ||
-      !tags ||
-      !description ||
-      !controls ||
-      !gameType
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Missing required fields in request body." });
-    }
+// async function uploadFiles(req, res) {
+//   try {
+//     const { gameTitle, category, tags, description, controls, gameType } =
+//       req.body;
+//     if (
+//       !gameTitle ||
+//       !category ||
+//       !tags ||
+//       !description ||
+//       !controls ||
+//       !gameType
+//     ) {
+//       return res
+//         .status(400)
+//         .json({ message: "Missing required fields in request body." });
+//     }
 
-    const files = [];
-    for (let file of req.files) {
-      const savedFile = await File.create({
-        gameTitle,
-        category,
-        tags,
-        description,
-        controls,
-        gameType,
-        fieldName: file.fieldname,
-        originalName: file.originalname,
-        enCoding: file.encoding,
-        mimeType: file.mimetype,
-        destination: file.destination,
-        fileName: file.filename,
-        path: file.path,
-        size: file.size,
-      });
-      files.push(savedFile);
-    }
-    res.json(files);
-  } catch (error) {
-    console.error("Error saving files:", error);
-    res.status(500).send("Server error.");
-  }
-}
+//     const files = [];
+//     for (let file of req.files) {
+//       const savedFile = await File.create({
+//         gameTitle,
+//         category,
+//         tags,
+//         description,
+//         controls,
+//         gameType,
+//         fieldName: file.fieldname,
+//         originalName: file.originalname,
+//         enCoding: file.encoding,
+//         mimeType: file.mimetype,
+//         destination: file.destination,
+//         fileName: file.filename,
+//         path: file.path,
+//         size: file.size,
+//       });
+//       files.push(savedFile);
+//     }
+//     res.json(files);
+//   } catch (error) {
+//     console.error("Error saving files:", error);
+//     res.status(500).send("Server error.");
+//   }
+// }
 
 async function uploadCharacterFile(req, res) {
   try {
@@ -166,7 +233,45 @@ async function uploadCharacterFile(req, res) {
   }
 }
 
-async function createUserInfo(req, res) {
+// async function createUserInfo(req, res) {
+//   console.log('~~~~~~~~~~~~~~~~~~~')
+//   try {
+//     const {
+//       email,
+//       creationTime,
+//       lastSignInTime,
+//       uid,
+//       providerId,
+//       localId,
+//       accessToken,
+//       refreshToken,
+//     } = req.body;
+//     if (!email || !creationTime || !lastSignInTime || !uid || !accessToken) {
+//       return res
+//         .status(400)
+//         .json({ message: "Missing required fields in request body." });
+//     }
+//     const newUser = await UserInfo.create({
+//       email,
+//       creationTime,
+//       lastSignInTime,
+//       uid,
+//       providerId,
+//       localId,
+//       accessToken,
+//       refreshToken,
+//     });
+//     res
+//       .status(201)
+//       .json({ message: "User created successfully", user: newUser });
+//   } catch (error) {
+//     console.error("Error creating user info:", error);
+//     res.status(500).send("Server error.");
+//   }
+// }
+
+
+app.post("/api/pwniq/userInfo", async (req, res) => {
   try {
     const {
       email,
@@ -174,10 +279,10 @@ async function createUserInfo(req, res) {
       lastSignInTime,
       uid,
       providerId,
-      localId,
       accessToken,
       refreshToken,
     } = req.body;
+    console.log("VVVVVVVVVVVV", req.body);
     if (!email || !creationTime || !lastSignInTime || !uid || !accessToken) {
       return res
         .status(400)
@@ -189,7 +294,6 @@ async function createUserInfo(req, res) {
       lastSignInTime,
       uid,
       providerId,
-      localId,
       accessToken,
       refreshToken,
     });
@@ -197,10 +301,11 @@ async function createUserInfo(req, res) {
       .status(201)
       .json({ message: "User created successfully", user: newUser });
   } catch (error) {
-    console.error("Error creating user info:", error);
+    console.error("Error saving files:", error);
     res.status(500).send("Server error.");
   }
-}
+});
+
 
 // Start the server
 mongoose

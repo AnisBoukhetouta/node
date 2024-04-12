@@ -6,7 +6,6 @@ const userInfoSchema = new mongoose.Schema({
   lastSignInTime: String,
   uid: String,
   providerId: String,
-  localId: String,
   accessToken: String,
   refreshToken: String,
 });
