@@ -22,6 +22,10 @@ app.use(
   "/api/pwniq/glbFiles",
   express.static(path.join(__dirname, "glbFiles"))
 );
+app.use(function (req, res, next) {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,17 +35,34 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const extension = path.extname(file.originalname);
-    cb(null, `${file.fieldname}${extension}`);
+    // cb(null, `${file.fieldname}${extension}`);
+    if (
+      file.fieldname === "landscapeFile" ||
+      file.fieldname === "portraitFile" ||
+      file.fieldname === "squareFile"
+    )
+      return cb(null, `${file.fieldname}${extension}`);
+    else cb(null, `${file.originalname}`);
+    // cb(null, `${fileName}`);
   },
 });
 const characterStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const destination = "glbFiles"; // Define the destination directory here
+    const destination = `glbFiles/${req.body.uid}/${req.body.fileType}`; // Define the destination directory here
     fs.mkdirSync(destination, { recursive: true });
     cb(null, destination);
   },
   filename: (req, file, cb) => {
-    cb(null, `${file.originalname}`);
+    let basename = req.body.fileType;
+    let destination = `glbFiles/${req.body.uid}/${req.body.fileType}`;
+    let count = 0;
+    let ext = path.extname(file.originalname);
+    let uniqueFilename = `${basename}_${count}.${ext}`;
+    while (fs.existsSync(path.join(destination, uniqueFilename))) {
+      count++;
+      uniqueFilename = `${basename}_${count}${ext}`;
+    }
+    cb(null, `${uniqueFilename}`);
   },
 });
 const upload = multer({ storage });
@@ -51,8 +72,12 @@ const characterUpload = multer({ storage: characterStorage });
 app.get("/api/pwniq/files", getFiles);
 app.post(
   "/api/pwniq/characterFileUpload",
-  characterUpload.single("characterFileUpload"),
-  uploadCharacterFile
+  characterUpload.fields([
+    { name: "fileType" },
+    { name: "coverImage" },
+    { name: "characterFileUpload" },
+  ]),
+  uploadCharacterFiles
 );
 app.get("/api/pwniq/characterFiles", getCharacterFiles);
 
@@ -93,13 +118,24 @@ async function getFiles(req, res) {
 
 async function getCharacterFiles(req, res) {
   try {
-    const query = req.query.uid;
-    if (!query) {
+    const uid = req.query.uid;
+    if (!uid) {
       return res
         .status(400)
         .json({ message: "Missing required fields in request body." });
     }
-    const characterFileModel = await CharacterFile.find({ userId: query });
+    // const characterFileModel = await CharacterFile.find(
+    //   { userId: uid, fileType: fileType }
+    // );
+    const characterFileModel = await CharacterFile.aggregate([
+      { $match: { userId: uid } },
+      {
+        $group: {
+          _id: "$fileType",
+          files: { $push: "$$ROOT" },
+        },
+      },
+    ]);
     res.json(characterFileModel);
   } catch (e) {
     console.error("Error retrieving files:", e);
@@ -107,27 +143,33 @@ async function getCharacterFiles(req, res) {
   }
 }
 
-async function uploadCharacterFile(req, res) {
+async function uploadCharacterFiles(req, res) {
   try {
-    const { uid } = req.body;
+    const { uid, fileType } = req.body;
     if (!uid) {
       return res
         .status(400)
         .json({ message: "Missing required fields in request body." });
     }
-    const file = req.file;
-    const savedFile = await CharacterFile.create({
-      userId: uid,
-      fieldName: file.fieldname,
-      originalName: file.originalname,
-      enCoding: file.encoding,
-      mimeType: file.mimetype,
-      destination: file.destination,
-      fileName: file.filename,
-      path: file.path,
-      size: file.size,
-    });
-    res.json(savedFile);
+    let files = [];
+    for (let fieldName of Object.keys(req.files)) {
+      for (let file of req.files[fieldName]) {
+        let savedFile = await CharacterFile.create({
+          userId: uid,
+          fileType,
+          fieldName: file.fieldname,
+          originalName: file.originalname,
+          enCoding: file.encoding,
+          mimeType: file.mimetype,
+          destination: file.destination,
+          fileName: file.filename,
+          path: file.path,
+          size: file.size,
+        });
+        files.push(savedFile);
+      }
+    }
+    res.json(files);
   } catch (error) {
     console.error("Error saving files:", error);
     res.status(500).send("Server error.");
@@ -151,7 +193,7 @@ async function uploadFiles(req, res) {
         .json({ message: "Missing required fields in request body." });
     }
 
-    var files = [];
+    let files = [];
 
     for (let fieldName of Object.keys(req.files)) {
       for (let file of req.files[fieldName]) {

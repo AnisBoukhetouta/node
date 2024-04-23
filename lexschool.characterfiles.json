@@ -1,0 +1,192 @@
+[{
+  "_id": {
+    "$oid": "66227e4ef7e9d8cdefb51224"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Outfit",
+  "fieldName": "coverImage",
+  "originalName": "2.jpg",
+  "enCoding": "7bit",
+  "mimeType": "image/jpeg",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Outfit",
+  "fileName": "Outfit_0..jpg",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Outfit\\Outfit_0..jpg",
+  "size": "448387",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227e4ef7e9d8cdefb51226"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Outfit",
+  "fieldName": "characterFileUpload",
+  "originalName": "character.glb",
+  "enCoding": "7bit",
+  "mimeType": "application/octet-stream",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Outfit",
+  "fileName": "Outfit_0..glb",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Outfit\\Outfit_0..glb",
+  "size": "456592",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227e75f7e9d8cdefb5122a"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Backbling",
+  "fieldName": "coverImage",
+  "originalName": "1.jpg",
+  "enCoding": "7bit",
+  "mimeType": "image/jpeg",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Backbling",
+  "fileName": "Backbling_1..jpg",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Backbling\\Backbling_1..jpg",
+  "size": "1080813",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227e75f7e9d8cdefb5122c"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Backbling",
+  "fieldName": "characterFileUpload",
+  "originalName": "character.glb",
+  "enCoding": "7bit",
+  "mimeType": "application/octet-stream",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Backbling",
+  "fileName": "Backbling_1..glb",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Backbling\\Backbling_1..glb",
+  "size": "456592",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227e8ff7e9d8cdefb5122f"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Pickaxe",
+  "fieldName": "coverImage",
+  "originalName": "3.jpeg",
+  "enCoding": "7bit",
+  "mimeType": "image/jpeg",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Pickaxe",
+  "fileName": "Pickaxe_0..jpeg",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Pickaxe\\Pickaxe_0..jpeg",
+  "size": "154145",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227e8ff7e9d8cdefb51231"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Pickaxe",
+  "fieldName": "characterFileUpload",
+  "originalName": "character.glb",
+  "enCoding": "7bit",
+  "mimeType": "application/octet-stream",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Pickaxe",
+  "fileName": "Pickaxe_0..glb",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Pickaxe\\Pickaxe_0..glb",
+  "size": "456592",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227ec4f7e9d8cdefb51235"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Glider",
+  "fieldName": "coverImage",
+  "originalName": "8.jpeg",
+  "enCoding": "7bit",
+  "mimeType": "image/jpeg",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Glider",
+  "fileName": "Glider_0..jpeg",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Glider\\Glider_0..jpeg",
+  "size": "136857",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227ec4f7e9d8cdefb51237"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Glider",
+  "fieldName": "characterFileUpload",
+  "originalName": "character.glb",
+  "enCoding": "7bit",
+  "mimeType": "application/octet-stream",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Glider",
+  "fileName": "Glider_0..glb",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Glider\\Glider_0..glb",
+  "size": "456592",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227f27f7e9d8cdefb5123b"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Contrail",
+  "fieldName": "coverImage",
+  "originalName": "7.jpeg",
+  "enCoding": "7bit",
+  "mimeType": "image/jpeg",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Contrail",
+  "fileName": "Contrail_0..jpeg",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Contrail\\Contrail_0..jpeg",
+  "size": "104038",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227f27f7e9d8cdefb5123d"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Contrail",
+  "fieldName": "characterFileUpload",
+  "originalName": "character.glb",
+  "enCoding": "7bit",
+  "mimeType": "application/octet-stream",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Contrail",
+  "fileName": "Contrail_0..glb",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Contrail\\Contrail_0..glb",
+  "size": "456592",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227f3bf7e9d8cdefb51241"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Aura",
+  "fieldName": "coverImage",
+  "originalName": "9.jpeg",
+  "enCoding": "7bit",
+  "mimeType": "image/jpeg",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Aura",
+  "fileName": "Aura_0..jpeg",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Aura\\Aura_0..jpeg",
+  "size": "162631",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66227f3bf7e9d8cdefb51243"
+  },
+  "userId": "sEfPxjjWPkfLdn9SxZm9zzdHSi32",
+  "fileType": "Aura",
+  "fieldName": "characterFileUpload",
+  "originalName": "character.glb",
+  "enCoding": "7bit",
+  "mimeType": "application/octet-stream",
+  "destination": "glbFiles/sEfPxjjWPkfLdn9SxZm9zzdHSi32/Aura",
+  "fileName": "Aura_0..glb",
+  "path": "glbFiles\\sEfPxjjWPkfLdn9SxZm9zzdHSi32\\Aura\\Aura_0..glb",
+  "size": "456592",
+  "__v": 0
+}]

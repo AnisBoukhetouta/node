@@ -18,17 +18,17 @@ const loginAuth = async (req, res) => {
 };
 
 const signupAuth = async (req, res) => {
-    const { username, password } = req.body;
-    try {
-      const auth = await Auth.signup(username, password);
-      const token = createToken(auth._id);
-      res.status(200).json({ username, token });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
+  const { username, password } = req.body;
+  try {
+    const auth = await Auth.signup(username, password);
+    const token = createToken(auth._id);
+    res.status(200).json({ username, token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
-    loginAuth,
-    signupAuth,
-  };
+  loginAuth,
+  signupAuth,
+};
